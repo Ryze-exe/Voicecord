@@ -9,9 +9,9 @@ GUILD_ID = int(os.environ["GUILD_ID"])
 CHANNEL_ID = int(os.environ["CHANNEL_ID"])
 
 
-STATUS = "online" # online / dnd / idle
-SELF_MUTE = True
-SELF_DEAF = False
+STATUS = os.environ.get("STATUS", "online")
+SELF_MUTE = os.environ.get("SELF_MUTE", "true").lower() == "true"
+SELF_DEAF = os.environ.get("SELF_DEAF", "false").lower() == "true"
 
 API = "https://discord.com/api/v10"
 

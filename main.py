@@ -9,7 +9,7 @@ CHANNEL_ID = "ADD_YOUR_CHANNEL_ID_HERE"
 
 STATUS = "online" # online / dnd / idle
 SELF_MUTE = True
-SELF_DEAF = False
+SELF_DEAF = True
 
 API = "https://discord.com/api/v10"
 

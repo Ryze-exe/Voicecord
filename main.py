@@ -2,10 +2,12 @@ import asyncio
 import json
 import requests
 import websockets
+import os
 
-TOKEN = "Add your token here"
-GUILD_ID = "ADD_YOUR_SERVER_ID_HERE"
-CHANNEL_ID = "ADD_YOUR_CHANNEL_ID_HERE"
+TOKEN = os.environ["DISCORD_TOKEN"]
+GUILD_ID = int(os.environ["GUILD_ID"])
+CHANNEL_ID = int(os.environ["CHANNEL_ID"])
+
 
 STATUS = "online" # online / dnd / idle
 SELF_MUTE = True

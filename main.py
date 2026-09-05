@@ -57,18 +57,15 @@ async def main():
             event = json.loads(await ws.recv())
             if event.get("t") == "READY":
                 break
-print("DEBUG MUTE:", SELF_MUTE)
-print("DEBUG DEAF:", SELF_DEAF)
-
-await ws.send(json.dumps({
-    "op": 4,
-    "d": {
-        "guild_id": GUILD_ID,
-        "channel_id": CHANNEL_ID,
-        "self_mute": SELF_MUTE,
-        "self_deaf": SELF_DEAF
-    }
-}))
+        await ws.send(json.dumps({
+            "op": 4,
+            "d": {
+                "guild_id": GUILD_ID,
+                "channel_id": CHANNEL_ID,
+                "self_mute": SELF_MUTE,
+                "self_deaf": SELF_DEAF
+            }
+        }))
 
         print("Joined the voice channel!")
 

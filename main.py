@@ -57,6 +57,7 @@ async def main():
             event = json.loads(await ws.recv())
             if event.get("t") == "READY":
                 break
+                
         await ws.send(json.dumps({
             "op": 4,
             "d": {

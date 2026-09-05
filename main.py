@@ -11,7 +11,7 @@ CHANNEL_ID = int(os.environ["CHANNEL_ID"])
 
 STATUS = os.environ.get("STATUS", "online")
 SELF_MUTE = os.environ.get("SELF_MUTE", "true").lower() == "true"
-SELF_DEAF = os.environ.get("SELF_DEAF", "false").lower() == "true"
+SELF_DEAF = os.environ.get("SELF_DEAF", "true").lower() == "true"
 
 API = "https://discord.com/api/v10"
 
@@ -57,16 +57,18 @@ async def main():
             event = json.loads(await ws.recv())
             if event.get("t") == "READY":
                 break
+print("DEBUG MUTE:", SELF_MUTE)
+print("DEBUG DEAF:", SELF_DEAF)
 
-        await ws.send(json.dumps({
-            "op": 4,
-            "d": {
-                "guild_id": GUILD_ID,
-                "channel_id": CHANNEL_ID,
-                "self_mute": SELF_MUTE,
-                "self_deaf": SELF_DEAF
-            }
-        }))
+await ws.send(json.dumps({
+    "op": 4,
+    "d": {
+        "guild_id": GUILD_ID,
+        "channel_id": CHANNEL_ID,
+        "self_mute": SELF_MUTE,
+        "self_deaf": SELF_DEAF
+    }
+}))
 
         print("Joined the voice channel!")
 

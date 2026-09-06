@@ -58,6 +58,9 @@ async def main():
             if event.get("t") == "READY":
                 break
 
+        print("DEBUG MUTE:", SELF_MUTE)
+        print("DEBUG DEAF:", SELF_DEAF)
+
         await ws.send(json.dumps({
             "op": 4,
             "d": {

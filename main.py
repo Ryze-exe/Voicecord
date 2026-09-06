@@ -71,13 +71,26 @@ async def main():
             }
         }))
 
-        print("Joined the voice channel!")
+        print("Voice state request sent!")
 
         while True:
             try:
                 msg = await ws.recv()
-            except:
-                print("Disconnected, reconnecting...")
+                data = json.loads(msg)
+
+                if data.get("t") == "VOICE_STATE_UPDATE":
+                    voice = data.get("d", {})
+
+                    if voice.get("user_id") == user["id"]:
+                        print("DISCORD VOICE STATE:")
+                        print("SELF MUTE:", voice.get("self_mute"))
+                        print("SELF DEAF:", voice.get("self_deaf"))
+                        print("SERVER MUTE:", voice.get("mute"))
+                        print("SERVER DEAF:", voice.get("deaf"))
+                        print("CHANNEL:", voice.get("channel_id"))
+
+            except Exception as e:
+                print("Voice error:", e)
                 break
 
 async def run():

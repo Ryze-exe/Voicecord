@@ -179,9 +179,13 @@ class VoiceConnection:
 
 
 async def heartbeat(ws, interval):
-    while True:
-        await asyncio.sleep(interval / 1000)
-        await ws.send(json.dumps({"op": 1, "d": None}))
+    try:
+        while True:
+            await asyncio.sleep(interval / 1000)
+            await ws.send(json.dumps({"op": 1, "d": None}))
+    except websockets.exceptions.ConnectionClosed:
+        # Socket already died; let the main recv loop notice and reconnect.
+        pass
 
 
 async def main():
@@ -215,6 +219,21 @@ async def main():
         print("MUTE VALUE:", SELF_MUTE, type(SELF_MUTE))
         print("DEAF VALUE:", SELF_DEAF, type(SELF_DEAF))
 
+        # Force an explicit leave first. If the account was left dangling in
+        # the channel from a previous run/crash, Discord won't hand out a
+        # fresh VOICE_SERVER_UPDATE on rejoin unless we tear the old session
+        # down ourselves.
+        await ws.send(json.dumps({
+            "op": 4,
+            "d": {
+                "guild_id": GUILD_ID,
+                "channel_id": None,
+                "self_mute": False,
+                "self_deaf": False
+            }
+        }))
+        await asyncio.sleep(2)  # give Discord time to process the leave
+
         await ws.send(json.dumps({
             "op": 4,
             "d": {
@@ -233,6 +252,17 @@ async def main():
             try:
                 msg = await ws.recv()
                 data = json.loads(msg)
+
+                if data.get("op") == 7:
+                    print("Gateway requested RECONNECT, forcing reconnect.")
+                    if voice_conn:
+                        await voice_conn.close()
+                    return
+                if data.get("op") == 9:
+                    print("INVALID_SESSION received, forcing reconnect.")
+                    if voice_conn:
+                        await voice_conn.close()
+                    return
 
                 if data.get("t") == "VOICE_STATE_UPDATE":
                     voice = data.get("d", {})
